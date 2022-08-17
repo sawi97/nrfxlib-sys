@@ -27,8 +27,8 @@ fn main() {
 		.clang_arg("-target")
 		.clang_arg("arm")
 		.clang_arg("-mcpu=cortex-m33")
-		// Use softfp
-		.clang_arg("-mfloat-abi=soft")
+		// Use hardfp
+		.clang_arg("-mfloat-abi=hard")
 		// We're no_std
 		.use_core()
 		// Use our own ctypes to save using libc
