@@ -50,29 +50,51 @@ fn main() {
 	let mut rust_source = bindings.to_string();
 
 	// Munge Doxygen comments into something Rustdoc can handle
-	rust_source = rust_source.replace("#[doc = \"@{*/\"]", "");
+	rust_source = rust_source.replace("#[doc = \" @{\"]", "");
 	let re = regex::Regex::new("\"   \\s+- ").unwrap();
 	rust_source = re.replace_all(&rust_source, "\" * ").into();
 	let re = regex::Regex::new(r"\s*@param\s+(?P<var>[A-Za-z0-9_]+)\s+").unwrap();
 	rust_source = re.replace_all(&rust_source, " * `$var` - ").into();
 	let re =
-		regex::Regex::new(r"\s*@param\[(out|in|inout|in,out)\](\\t|\s+)(?P<var>[A-Za-z0-9_]+)\s+")
+		regex::Regex::new(r"\s*@?[pP]aram\[(out|in|inout|in,out)\](\\t|\s+)(?P<var>[A-Za-z0-9_]+)\s+")
 			.unwrap();
 	rust_source = re.replace_all(&rust_source, " * `$var` - ").into();
 	let re = regex::Regex::new(r"@[cp]\s+(?P<var>[A-Za-z0-9_\(\)]+)").unwrap();
 	rust_source = re.replace_all(&rust_source, " * `$var` - ").into();
 	let re = regex::Regex::new(r"\\\\[cp]\s+(?P<var>[A-Za-z0-9_\(\)]+)").unwrap();
 	rust_source = re.replace_all(&rust_source, "`$var`").into();
+
 	let re = regex::Regex::new(r"\\\\ref\s+(?P<var>[A-Za-z0-9_\(\)]+)").unwrap();
 	rust_source = re.replace_all(&rust_source, "`$var`").into();
+
 	rust_source = rust_source.replace("\" @remark", "\" NB: ");
-	rust_source = rust_source.replace("\"@brief", "\"");
-	rust_source = rust_source.replace("\" @brief", "\" ");
-	rust_source = rust_source.replace("\"@detail", "\"");
-	rust_source = rust_source.replace("\" @detail", "\" ");
+
+	let re = regex::Regex::new(r"\s*@brief\s*(?P<var>.*)").unwrap();
+	rust_source = re.replace_all(&rust_source, "$var").into();
+
+	let re = regex::Regex::new(r"\s*@note\s+(?P<var>.*)").unwrap();
+	rust_source = re.replace_all(&rust_source, "\n\n**Note**: $var").into();
+
+	let re = regex::Regex::new(r"\s*@details?\s+(?P<var>.*)").unwrap();
+	rust_source = re.replace_all(&rust_source, "# Details \n$var").into();
+
 	rust_source = rust_source.replace("@name ", "# ");
-	rust_source = rust_source.replace("@return ", "Returns ");
-	rust_source = rust_source.replace("@retval ", "Returns ");
+	rust_source = rust_source.replace("@return ", "# Returns\n");
+	rust_source = rust_source.replace("@returns ", "# Returns\n");
+	rust_source = rust_source.replace("@retval ", "# Returns\n");
+
+	// Remove @addtogroup stuff
+	let re = regex::RegexBuilder::new(r"^#\[doc.*@addtogroup(.|\n)*?^$")
+		.multi_line(true)
+		.build()
+		.unwrap();
+	rust_source = re.replace_all(&rust_source, "").into();
+
+	// Format deprecation notice as deprecated
+	let re = regex::Regex::new("#\\[doc.*@deprecated\\s*(?P<note>.*)\\.*\".*]").unwrap();
+	rust_source = re
+		.replace_all(&rust_source, "#[deprecated(note=\"$note\")]")
+		.into();
 
 	let out_path = PathBuf::from(env::var("OUT_DIR").unwrap()).join("bindings.rs");
 	std::fs::write(out_path, rust_source).expect("Couldn't write updated bindgen output");
