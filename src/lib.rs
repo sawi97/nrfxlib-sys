@@ -18,12 +18,12 @@ pub mod ctypes {
 
 	#[repr(u8)]
 	pub enum c_void {
-		// Two dummy variants so the #[repr] attribute can be used.
 		#[doc(hidden)]
-		__variant1,
-		#[doc(hidden)]
-		__variant2,
+		null = 0,
 	}
 }
+
+/// Equivalent to a C NULL pointer
+pub const NULL: ctypes::c_void = ctypes::c_void::null;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
