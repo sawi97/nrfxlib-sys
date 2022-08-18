@@ -91,7 +91,7 @@ fn main() {
     rust_source = re.replace_all(&rust_source, "\n\n**Note**: $var").into();
 
     // Format some sections as headers
-    let re = regex::Regex::new(r"\s*@details?\s+(?P<var>.*)").unwrap();
+    let re = regex::Regex::new(r"\s*@details?\s*(?P<var>.*)").unwrap();
     rust_source = re.replace_all(&rust_source, "# Details \n$var").into();
     rust_source = rust_source.replace("@name ", "# ");
     rust_source = rust_source.replace("@return ", "# Returns\n");

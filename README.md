@@ -24,7 +24,7 @@ In your own program or library, you can depend on this crate in the usual fashio
 
 ```toml
 [dependencies]
-nrfxlib-sys = "1.4"
+nrfxlib-sys = "2.0"
 ```
 
 Or you might prefer the [higher-level wrapper by 42 Technology](https://crates.io/crates/nrfxlib):
