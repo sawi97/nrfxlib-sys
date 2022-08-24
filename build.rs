@@ -84,7 +84,6 @@ fn main() {
         .into();
 
     // Format inline markup
-    rust_source = rust_source.replace("\" @remark", "\" NB: ");
     let re = regex::Regex::new(r"\s*@brief\s*(?P<var>.*)").unwrap();
     rust_source = re.replace_all(&rust_source, "$var").into();
     let re = regex::Regex::new(r"\s*@note\s+(?P<var>.*)").unwrap();
