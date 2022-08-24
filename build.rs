@@ -41,6 +41,8 @@ fn main() {
         .allowlist_var("BSD_.*")
         // Format the output
         .rustfmt_bindings(true)
+        // Use signed macro const type
+        .default_macro_constant_type(bindgen::MacroTypeVariation::Signed)
         // Finish the builder and generate the bindings.
         .generate()
         // Unwrap the Result and panic on failure.
@@ -58,12 +60,12 @@ fn main() {
     let re = regex::Regex::new(r"\s*@[pP]aram\s*(\[(?P<typ>out|in|inout|in,\s*out)\])?\s+(?P<var>[A-Za-z0-9_\.]+)\s+").unwrap();
     rust_source = re.replace_all(&rust_source, " * `$var` $typ - ").into();
 
-    // Format @p/@a arguments as inline code
-    let re = regex::Regex::new(r"@[pa]\s+(?P<var>[A-Za-z0-9_\(\)]+)").unwrap();
+    // Format @p/@a/@c arguments as inline code
+    let re = regex::Regex::new(r"@[pac]\s+(?P<var>[A-Za-z0-9_\(\)]+)").unwrap();
     rust_source = re.replace_all(&rust_source, " `$var` ").into();
 
     // Format NRF_* as ref
-    let re = regex::Regex::new(r"(?P<pre>@(returns?|note)\s+.*)(?P<var>NRF_\w+)").unwrap();
+    let re = regex::Regex::new(r"(?P<pre>@(returns?|retval|note)\s+.*)(?P<var>NRF_\w+)").unwrap();
     rust_source = re.replace_all(&rust_source, "$pre[$var]").into();
 
     // Remove @addtogroup stuff
@@ -73,15 +75,15 @@ fn main() {
         .unwrap();
     rust_source = re.replace_all(&rust_source, "").into();
 
+    // Format @ref as markdown ref
+    let re = regex::Regex::new(r"\s*@(ref|refitem)\s+(?P<var>\w+)").unwrap();
+    rust_source = re.replace_all(&rust_source, " [$var]").into();
+
     // Format deprecation notice as deprecated
     let re = regex::Regex::new("#\\[doc.*@deprecated\\s*(?P<note>.*)\\.*\".*]").unwrap();
     rust_source = re
         .replace_all(&rust_source, "#[deprecated(note=\"$note\")]")
         .into();
-
-    // Format @ref / @c as markdown ref
-    let re = regex::Regex::new(r"\s*@(ref|c)\s+(?P<var>\w+)").unwrap();
-    rust_source = re.replace_all(&rust_source, " [$var]").into();
 
     // Format inline markup
     rust_source = rust_source.replace("\" @remark", "\" NB: ");
