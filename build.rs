@@ -53,11 +53,9 @@ fn main() {
 
     // Munge Doxygen comments into something Rustdoc can handle
     rust_source = rust_source.replace("#[doc = \" @{\"]", "");
-    let re = regex::Regex::new("\"   \\s+- ").unwrap();
-    rust_source = re.replace_all(&rust_source, "\" * ").into();
 
     // Format @param as list element
-    let re = regex::Regex::new(r"\s*@[pP]aram\s*(\[(?P<typ>out|in|inout|in,\s*out)\])?\s+(?P<var>[A-Za-z0-9_\.]+)\s+").unwrap();
+    let re = regex::Regex::new(r"\s*@[pP]aram\s*(\[(?P<typ>[\w,\s]+)\s*\])?\s+(?P<var>[\w\.]+)\s+").unwrap();
     rust_source = re.replace_all(&rust_source, " * `$var` $typ - ").into();
 
     // Format @p/@a/@c arguments as inline code
