@@ -6,12 +6,13 @@ authors = [
 	"42 Technology Ltd <jonathan.pallant@42technology.com>",
 	"sander <sander.wittwer@grindoy.no>",
 ]
-edition = "2021"
+edition = "2018"
 description = "Rust bindings to the Nordic nRF9160 Socket Library."
 readme = "README.md"
 license-file = "LICENCE.md"
 repository = "https://github.com/42-technology-ltd/nrfxlib-sys"
 resolver = "2"
+
 # The nrfxlib folder is quite large, so only include the pieces we need
 include = [
 	"src/**",
