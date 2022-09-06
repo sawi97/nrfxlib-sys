@@ -35,10 +35,10 @@ fn main() {
         .ctypes_prefix("ctypes")
         // Include only the useful stuff
         .allowlist_function("nrf_.*")
-        .allowlist_function("bsd_.*")
         .allowlist_type("nrf_.*")
         .allowlist_var("NRF_.*")
-        .allowlist_var("BSD_.*")
+        // Some macros from nrf_modem.h
+        .allowlist_var("MODEM_.*")
         // Format the output
         .rustfmt_bindings(true)
         // Use signed macro const type
