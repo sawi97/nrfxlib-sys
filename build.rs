@@ -66,6 +66,12 @@ fn main() {
     let re = regex::Regex::new(r"(?P<pre>@(returns?|retval|note)\s+.*)(?P<var>NRF_\w+)").unwrap();
     rust_source = re.replace_all(&rust_source, "$pre[$var]").into();
 
+    // #nrf_*
+    let re = regex::Regex::new("(?P<pre>#\\[doc.*\\s+)#(?P<var>(nrf|NRF)_\\w+)(?P<post>\\s+.*\"\\])").unwrap();
+    rust_source = re
+        .replace_all(&rust_source, "$pre[$var]$post")
+        .into();
+
     // Remove @addtogroup stuff
     let re = regex::RegexBuilder::new(r"^#\[doc.*@addtogroup(.|\n)*?^$")
         .multi_line(true)
@@ -114,5 +120,5 @@ fn main() {
             .display()
     );
     println!("cargo:rustc-link-lib=static=modem");
-    println!("cargo:rustc-link-lib=static=oberon_3.0.11");
+    println!("cargo:rustc-link-lib=static=oberon_3.0.12");
 }

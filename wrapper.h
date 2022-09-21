@@ -15,6 +15,7 @@
 #include "nrf_modem/include/nrf_modem_limits.h"
 #include "nrf_modem/include/nrf_modem_os.h"
 #include "nrf_modem/include/nrf_modem_platform.h"
+#include "nrf_modem/include/nrf_modem_trace.h"
 #include "nrf_modem/include/nrf_socket.h"
 
 /*

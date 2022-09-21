@@ -1,10 +1,9 @@
 [package]
 name = "nrfxlib-sys"
-version = "2.0.2"
+version = "2.1.0"
 authors = [
 	"Jonathan 'theJPster' Pallant <github@thejpster.org.uk>",
 	"42 Technology Ltd <jonathan.pallant@42technology.com>",
-	"sander <sander.wittwer@grindoy.no>",
 ]
 edition = "2018"
 description = "Rust bindings to the Nordic nRF9160 Socket Library."
