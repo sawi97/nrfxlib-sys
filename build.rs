@@ -55,11 +55,11 @@ fn main() {
     rust_source = rust_source.replace("#[doc = \" @{\"]", "");
 
     // Format @param as list element
-    let re = regex::Regex::new(r"\s*@[pP]aram\s*(\[(?P<typ>[\w,\s]+)\s*\])?\s+(?P<var>[\w\.]+)\s+").unwrap();
+    let re = regex::Regex::new(r"\s*@[pP]aram\s*(\[(?P<typ>[\w,\s]+)\s*\])?\s*(\\t)?(?P<var>[\w\.]+)\s+").unwrap();
     rust_source = re.replace_all(&rust_source, " * `$var` $typ - ").into();
 
     // Format @p/@a/@c arguments as inline code
-    let re = regex::Regex::new(r"@[pac]\s+(?P<var>[A-Za-z0-9_\(\)]+)").unwrap();
+    let re = regex::Regex::new(r"@[pac]\s+(?P<var>[\*A-Za-z0-9_\(\)]+)").unwrap();
     rust_source = re.replace_all(&rust_source, " `$var` ").into();
 
     // Format NRF_* as ref
@@ -80,25 +80,30 @@ fn main() {
     rust_source = re.replace_all(&rust_source, "").into();
 
     // Format @ref as markdown ref
-    let re = regex::Regex::new(r"\s*@(ref|refitem)\s+(?P<var>\w+)").unwrap();
+    let re = regex::Regex::new(r"\s*@(ref|refitem)\s+(?P<var>\w+)(\(\))?").unwrap();
     rust_source = re.replace_all(&rust_source, " [$var]").into();
 
-    // Format deprecation notice as deprecated
+    // Format deprecation notice (@deprecated) as deprecated
     let re = regex::Regex::new("#\\[doc.*@deprecated\\s*(?P<note>.*)\\.*\".*]").unwrap();
     rust_source = re
         .replace_all(&rust_source, "#[deprecated(note=\"$note\")]")
         .into();
 
-    // Format inline markup
-    let re = regex::Regex::new(r"\s*@brief\s*(?P<var>.*)").unwrap();
-    rust_source = re.replace_all(&rust_source, "$var").into();
-    let re = regex::Regex::new(r"\s*@note:?\s+(?P<var>.*)").unwrap();
-    rust_source = re.replace_all(&rust_source, "\n\n**Note**: $var").into();
+    // Format inline @brief
+    let re = regex::Regex::new("#\\[doc = \"\\s*@brief\\s*(?P<msg>.*)\"]").unwrap();
+    rust_source = re
+        .replace_all(&rust_source, "#[doc = \"$msg\"]")
+        .into();
 
-    // Format some sections as headers
+    // Format inline @note as bold
+    let re = regex::Regex::new(r"\s*@note:?\s*").unwrap();
+    rust_source = re.replace_all(&rust_source, "**Note:** ").into();
+
+    // Format @details as a section
     let re = regex::Regex::new(r"\s*@details?\s*(?P<var>.*)").unwrap();
     rust_source = re.replace_all(&rust_source, "# Details \n$var").into();
-    rust_source = rust_source.replace("@name ", "# ");
+
+    // // Format some sections as headers
     rust_source = rust_source.replace("@return ", "# Returns\n");
     rust_source = rust_source.replace("@returns ", "# Returns\n");
     rust_source = rust_source.replace("@retval ", "# Returns\n");
