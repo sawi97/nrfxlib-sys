@@ -6,16 +6,15 @@
  * libbsd headers
  */
 #include "nrf_modem/include/nrf_errno.h"
-#include "nrf_modem/include/nrf_gai_errors.h"
 #include "nrf_modem/include/nrf_modem.h"
 #include "nrf_modem/include/nrf_modem_at.h"
-#include "nrf_modem/include/nrf_modem_delta_dfu.h"
-#include "nrf_modem/include/nrf_modem_full_dfu.h"
 #include "nrf_modem/include/nrf_modem_gnss.h"
-#include "nrf_modem/include/nrf_modem_limits.h"
 #include "nrf_modem/include/nrf_modem_os.h"
-#include "nrf_modem/include/nrf_modem_trace.h"
 #include "nrf_modem/include/nrf_socket.h"
+#include "nrf_modem/include/nrf_gai_errors.h"
+#include "nrf_modem/include/nrf_modem_delta_dfu.h"
+#include "nrf_modem/include/nrf_modem_trace.h"
+#include "nrf_modem/include/nrf_modem_bootloader.h"
 
 /*
  * Crypto Cell 310 (CC310) platform headers
