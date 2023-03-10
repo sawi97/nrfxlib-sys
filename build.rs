@@ -53,7 +53,15 @@ fn main() {
             .join("crypto/nrf_oberon/lib/cortex-m33/hard-float")
             .display()
     );
-    println!("cargo:rustc-link-lib=static=modem");
+
+    // Evaluate which library to use, based on the log feature
+    let modem_lib: String = if cfg!(feature = "log") {
+        "modem_log".into()
+    } else {
+        "modem".into()
+    };
+
+    println!("cargo:rustc-link-lib=static={}", modem_lib);
     println!("cargo:rustc-link-lib=static=oberon_3.0.12");
 }
 

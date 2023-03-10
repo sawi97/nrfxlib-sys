@@ -37,3 +37,6 @@ include = [
 [build-dependencies]
 regex = "1"
 bindgen = "0.64"
+
+[features]
+log = []
