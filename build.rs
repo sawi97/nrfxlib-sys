@@ -53,6 +53,12 @@ fn main() {
             .join("crypto/nrf_oberon/lib/cortex-m33/hard-float")
             .display()
     );
+    println!(
+        "cargo:rustc-link-search={}",
+        Path::new(&nrfxlib_path)
+            .join("crypto/nrf_cc310_platform/lib/cortex-m33/hard-float/no-interrupts")
+            .display()
+    );
 
     // Evaluate which library to use, based on the log feature
     let modem_lib: String = if cfg!(feature = "log") {
@@ -62,6 +68,7 @@ fn main() {
     };
 
     println!("cargo:rustc-link-lib=static={}", modem_lib);
+    println!("cargo:rustc-link-lib=static=nrf_cc310_platform_0.9.16");
     println!("cargo:rustc-link-lib=static=oberon_3.0.12");
 }
 
