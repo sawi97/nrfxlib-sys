@@ -81,7 +81,7 @@
 #include "crypto/nrf_oberon/include/ocrypto_aes_key.h"
 #include "crypto/nrf_oberon/include/ocrypto_chacha20.h"
 #include "crypto/nrf_oberon/include/ocrypto_chacha20_poly1305.h"
-#include "crypto/nrf_oberon/include/ocrypto_chacha20_poly1305_inc.h"
+//#include "crypto/nrf_oberon/include/ocrypto_chacha20_poly1305_inc.h"
 #include "crypto/nrf_oberon/include/ocrypto_constant_time.h"
 #include "crypto/nrf_oberon/include/ocrypto_curve25519.h"
 // #include "crypto/nrf_oberon/include/ocrypto_curve_p256.h"
