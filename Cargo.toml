@@ -40,3 +40,4 @@ bindgen = "0.64"
 
 [features]
 log = []
+decompress = []

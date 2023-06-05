@@ -8,6 +8,7 @@ fn main() {
     use std::path::{Path, PathBuf};
     let nrfxlib_path = "./third_party/nordic/nrfxlib";
 
+    // Generate bindings with bindgen
     let bindings = bindgen::Builder::default()
         // The input header we would like to generate
         // bindings for.
@@ -27,8 +28,6 @@ fn main() {
         .allowlist_function("nrf_.*")
         .allowlist_type("nrf_.*")
         .allowlist_var("NRF_.*")
-        // Some macros from nrf_modem.h are prefixed with MODEM_
-        .allowlist_var("MODEM_.*")
         // Format the output
         .rustfmt_bindings(true)
         // Use signed macro const type
@@ -40,36 +39,32 @@ fn main() {
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings.write_to_file(out_path.join("bindings.rs")).expect("Couldn't write bindings!");
 
-    // Make sure we link against the libraries
-    println!(
-        "cargo:rustc-link-search={}",
-        Path::new(&nrfxlib_path)
-            .join("nrf_modem/lib/cortex-m33/hard-float")
-            .display()
-    );
-    println!(
-        "cargo:rustc-link-search={}",
-        Path::new(&nrfxlib_path)
-            .join("crypto/nrf_oberon/lib/cortex-m33/hard-float")
-            .display()
-    );
-    println!(
-        "cargo:rustc-link-search={}",
-        Path::new(&nrfxlib_path)
-            .join("crypto/nrf_cc310_platform/lib/cortex-m33/hard-float/no-interrupts")
-            .display()
-    );
-
     // Evaluate which library to use, based on the log feature
     let modem_lib: String = if cfg!(feature = "log") {
         "modem_log".into()
     } else {
         "modem".into()
     };
+    let modem_libf = format!("lib{}.a", modem_lib);
+
+    // Copy libraries to the output directory (makes it easier to detect changed library names on future updates)
+    let libmodem_path = Path::new(&nrfxlib_path)
+        .join(format!("nrf_modem/lib/cortex-m33/hard-float/{modem_libf}"));
+    let liboberon_path = Path::new(&nrfxlib_path)
+        .join("crypto/nrf_oberon/lib/cortex-m33/hard-float/liboberon_3.0.13.a");
+    let libcc310_path = Path::new(&nrfxlib_path)
+        .join("crypto/nrf_cc310_platform/lib/cortex-m33/hard-float/no-interrupts/libnrf_cc310_platform_0.9.17.a");
+
+    std::fs::copy(libmodem_path.clone(), out_path.join(libmodem_path.file_name().unwrap())).unwrap();
+    std::fs::copy(liboberon_path.clone(), out_path.join(liboberon_path.file_name().unwrap())).unwrap();
+    std::fs::copy(libcc310_path.clone(), out_path.join(libcc310_path.file_name().unwrap())).unwrap();
+
+    // Link libraries
+    println!("cargo:rustc-link-search={}", out_path.display());
 
     println!("cargo:rustc-link-lib=static={}", modem_lib);
-    println!("cargo:rustc-link-lib=static=nrf_cc310_platform_0.9.16");
-    println!("cargo:rustc-link-lib=static=oberon_3.0.12");
+    println!("cargo:rustc-link-lib=static=nrf_cc310_platform_0.9.17");
+    println!("cargo:rustc-link-lib=static=oberon_3.0.13");
 }
 
 #[derive(Debug)]
