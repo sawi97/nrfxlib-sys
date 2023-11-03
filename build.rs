@@ -15,11 +15,10 @@ fn main() {
         .header("wrapper.h")
         .parse_callbacks(Box::new(DocCallback))
         // Point to Nordic headers
-        .clang_arg(format!("-I{}", nrfxlib_path))
-        // Point to our special local headers
         .clang_arg("-I./include")
-        .clang_arg("-I./third_party/nordic/nrfxlib/crypto/nrf_cc310_platform/include")
-        .clang_arg("-I./third_party/nordic/nrfxlib/crypto/nrf_oberon")
+        .clang_arg(format!("-I{}", nrfxlib_path))
+        .clang_arg(format!("-I{}/crypto/nrf_cc310_platform/include", nrfxlib_path))
+        .clang_arg(format!("-I{}/crypto/nrf_oberon", nrfxlib_path))
         // Disable standard includes (they belong to the host)
         .clang_arg("-nostdinc")
         .use_core()
@@ -28,8 +27,9 @@ fn main() {
         .allowlist_function("nrf_.*")
         .allowlist_type("nrf_.*")
         .allowlist_var("NRF_.*")
+        .allowlist_function("ocrypto_.*")
         // Format the output
-        .rustfmt_bindings(true)
+        .formatter(bindgen::Formatter::Prettyplease)
         // Use signed macro const type
         .default_macro_constant_type(bindgen::MacroTypeVariation::Signed)
         .generate()
@@ -46,14 +46,15 @@ fn main() {
         "modem".into()
     };
     let modem_libf = format!("lib{}.a", modem_lib);
+    let sip = "nRF9160";
 
     // Copy libraries to the output directory (makes it easier to detect changed library names on future updates)
     let libmodem_path = Path::new(&nrfxlib_path)
-        .join(format!("nrf_modem/lib/cortex-m33/hard-float/{modem_libf}"));
+        .join(format!("nrf_modem/lib/{sip}/hard-float/{modem_libf}"));
     let liboberon_path = Path::new(&nrfxlib_path)
         .join("crypto/nrf_oberon/lib/cortex-m33/hard-float/liboberon_3.0.13.a");
     let libcc310_path = Path::new(&nrfxlib_path)
-        .join("crypto/nrf_cc310_platform/lib/cortex-m33/hard-float/no-interrupts/libnrf_cc310_platform_0.9.17.a");
+        .join("crypto/nrf_cc310_platform/lib/cortex-m33/hard-float/no-interrupts/libnrf_cc310_platform_0.9.18.a");
 
     std::fs::copy(libmodem_path.clone(), out_path.join(libmodem_path.file_name().unwrap())).unwrap();
     std::fs::copy(liboberon_path.clone(), out_path.join(liboberon_path.file_name().unwrap())).unwrap();
@@ -63,7 +64,7 @@ fn main() {
     println!("cargo:rustc-link-search={}", out_path.display());
 
     println!("cargo:rustc-link-lib=static={}", modem_lib);
-    println!("cargo:rustc-link-lib=static=nrf_cc310_platform_0.9.17");
+    println!("cargo:rustc-link-lib=static=nrf_cc310_platform_0.9.18");
     println!("cargo:rustc-link-lib=static=oberon_3.0.13");
 }
 
@@ -73,6 +74,7 @@ struct DocCallback;
 impl bindgen::callbacks::ParseCallbacks for DocCallback {
     fn process_comment(&self, comment: &str) -> Option<String> {
         let mut comment = comment.to_owned();
+
         // Format inline @brief
         let re = regex::Regex::new("\\s*@brief\\s*(?P<msg>.*)").unwrap();
         comment = re.replace_all(&comment, "$msg").into();

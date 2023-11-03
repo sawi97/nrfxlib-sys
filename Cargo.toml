@@ -19,7 +19,7 @@ include = [
 	"build.rs",
 	"wrapper.h",
 	"*.md",
-	"third_party/nordic/nrfxlib/nrf_modem/lib/cortex-m33/hard-float/**",
+	"third_party/nordic/nrfxlib/nrf_modem/lib/nRF9160/hard-float/**",
 	"third_party/nordic/nrfxlib/nrf_modem/include/**",
 	"third_party/nordic/nrfxlib/nrf_modem/license.txt",
 	"third_party/nordic/nrfxlib/nrf_modem/README.rst",
@@ -36,8 +36,7 @@ include = [
 
 [build-dependencies]
 regex = "1"
-bindgen = "0.64"
+bindgen = "0.69"
 
 [features]
 log = []
-decompress = []
