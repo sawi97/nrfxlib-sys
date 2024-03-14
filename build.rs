@@ -5,6 +5,7 @@
 
 const LIBOBERON_PATH: &str = "crypto/nrf_oberon/lib/cortex-m33/hard-float/liboberon_3.0.14.a";
 const LIBCC310_PATH: &str = "crypto/nrf_cc310_platform/lib/cortex-m33/hard-float/no-interrupts/libnrf_cc310_platform_0.9.19.a";
+const LIBFUEL_GAUGE_PATH: &str = "nrf_fuel_gauge/lib/cortex-m33/hard-float/libnrf_fuel_gauge.a";
 
 fn main() {
     use std::env;
@@ -55,10 +56,12 @@ fn main() {
     let libmodem_path = Path::new(&nrfxlib_path).join(format!("nrf_modem/lib/{sip}/hard-float/{modem_libf}"));
     let liboberon_path = Path::new(&nrfxlib_path).join(LIBOBERON_PATH);
     let libcc310_path = Path::new(&nrfxlib_path).join(LIBCC310_PATH);
+    let libfuel_gauge_path = Path::new(&nrfxlib_path).join(LIBFUEL_GAUGE_PATH);
 
     std::fs::copy(libmodem_path.clone(), out_path.join(libmodem_path.file_name().unwrap())).unwrap();
     std::fs::copy(liboberon_path.clone(), out_path.join(liboberon_path.file_name().unwrap())).unwrap();
     std::fs::copy(libcc310_path.clone(), out_path.join(libcc310_path.file_name().unwrap())).unwrap();
+    std::fs::copy(libfuel_gauge_path.clone(), out_path.join(libfuel_gauge_path.file_name().unwrap())).unwrap();
 
     // Link libraries
     println!("cargo:rustc-link-search={}", out_path.display());
@@ -66,6 +69,7 @@ fn main() {
     println!("cargo:rustc-link-lib=static={}", modem_lib);
     println!("cargo:rustc-link-lib=static=nrf_cc310_platform_0.9.19");
     println!("cargo:rustc-link-lib=static=oberon_3.0.14");
+    println!("cargo:rustc-link-lib=static=nrf_fuel_gauge");
 }
 
 #[derive(Debug)]

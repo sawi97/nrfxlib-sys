@@ -16,7 +16,6 @@
 #include "nrf_modem/include/nrf_gai_errors.h"
 #include "nrf_modem/include/nrf_modem_os.h"
 #include "nrf_modem/include/nrf_modem.h"
-
 /*
  * Crypto Cell 310 (CC310) platform headers
  */
@@ -100,5 +99,10 @@
 #include "crypto/nrf_oberon/include/ocrypto_sha512.h"
 #include "crypto/nrf_oberon/include/ocrypto_srp.h"
 #include "crypto/nrf_oberon/include/ocrypto_srtp.h"
+
+/*
+ * nRF Fuel Gauge Library
+ */
+#include "nrf_fuel_gauge/include/nrf_fuel_gauge.h"
 
 // End of File
