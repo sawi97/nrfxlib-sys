@@ -1,6 +1,7 @@
 /**
  * These are the header files exported by this crate.
  */
+#define NRF91_SERIES
 
 /*
  * nrf_modem headers
