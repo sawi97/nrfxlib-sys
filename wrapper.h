@@ -30,6 +30,8 @@
 #include "crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_identity_key.h"
 #include "crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_kmu.h"
 #include "crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_mutex.h"
+#include "crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_sha256.h"
+//#include "crypto/nrf_cc310_platform/include/nrf_cc3xx_platform_shadow_key.h"
 
 /*
  * Crypto Cell 310 (CC310) mbedTLS integration headers
